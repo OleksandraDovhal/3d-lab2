@@ -1,0 +1,260 @@
+unit Unit1;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, StdCtrls, ExtCtrls, Math, DateUtils;
+
+type
+  TForm1 = class(TForm)
+    Image1: TImage;
+    EditX: TEdit;
+    EditY: TEdit;
+    EditR: TEdit;
+    Button1: TButton;
+    Button2: TButton;
+    ColorCombo: TComboBox;
+    Label1: TLabel;
+    Button3: TButton;
+    procedure Button1Click(Sender: TObject);
+    procedure Button2Click(Sender: TObject);
+    procedure Net;
+    procedure Init;
+    procedure Brezenhem;
+    procedure MyAlhorithm;
+    procedure MyAlhorithmInt;
+    procedure RecurseFilling(x,y,BorderColor: Integer);
+    procedure mh;
+    procedure md;
+    procedure mv;
+    procedure ColorComboChange(Sender: TObject);
+    procedure Image1MouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
+    procedure Button3Click(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  Form1: TForm1;
+  x,y,xi,yi,r,di,delta: Integer;
+  ColorLine : String;
+  Time: TDateTime;//Timer
+
+
+implementation
+
+{$R *.dfm}
+
+procedure TForm1.Brezenhem;
+begin
+  with Image1.Canvas do
+  begin
+    xi:=0;
+    yi:=r;
+    di:=2*(1-r);
+    while(yi>=xi) do //якщо ще не дійшли до межі
+    begin
+      Pixels[xi+x,yi+y]:=stringtocolor('cl'+ColorCombo.Text);
+      Pixels[xi*-1+x,yi+y]:=stringtocolor('cl'+ColorCombo.Text);
+      Pixels[xi+x,yi*-1+y]:=stringtocolor('cl'+ColorCombo.Text);
+      Pixels[xi*-1+x,yi*-1+y]:=stringtocolor('cl'+ColorCombo.Text);
+
+      Pixels[yi+x,xi+y]:=stringtocolor('cl'+ColorCombo.Text);
+      Pixels[yi*-1+x,xi+y]:=stringtocolor('cl'+ColorCombo.Text);
+      Pixels[yi+x,xi*-1+y]:=stringtocolor('cl'+ColorCombo.Text);
+      Pixels[yi*-1+x,xi*-1+y]:=stringtocolor('cl'+ColorCombo.Text);
+      sleep(5);
+      Application.Processmessages;
+      //di
+      if(di<0) then//випадки 1,2
+        begin
+          delta:=2*di+2*yi-1;
+          if delta<=0 then mh
+          else md;
+        end
+      else
+        if(di>0) then//випадки 3,4
+          begin
+            delta:=2*di+2*xi-1;
+            if delta<=0 then md
+            else mv;
+          end
+        else md; //випадок 5
+    end;
+  end;
+end;
+
+procedure TForm1.Button1Click(Sender: TObject);
+begin
+  Net;
+  Init;
+  Time:=Now;
+  Brezenhem;
+  Label1.Caption:=FloatToStr(MilliSecondSpan(Now,Time));
+end;
+
+procedure TForm1.Net;
+var i,j : Integer;
+Rect: TRect;
+begin
+  with Image1.Canvas do
+  begin
+    Rect.Left:=0;
+    Rect.Right:=320;
+    Rect.Top:=0;
+    Rect.Bottom:=320;
+    Image1.Canvas.FillRect(Rect);   //(0,0,320,320,clWhite);
+    FloodFill(1,1,clWhite,fsborder);
+    Pen.Color:=clGray;
+    Pen.Style:=psDot;
+    for i:=0 to 20 do
+      begin
+        MoveTo(i*20,0);
+        LineTo(i*20,320);
+        Moveto(0,i*20);
+        LineTo(320,i*20);
+      end;
+    Pen.Style:=psSolid;
+  end;
+end;
+
+procedure TForm1.Button2Click(Sender: TObject);
+begin
+  Net;
+  Init;
+  Time:=Now;
+  MyAlhorithm;
+  Label1.Caption:=FloatToStr(MilliSecondSpan(Now,Time));
+end;
+
+procedure TForm1.ColorComboChange(Sender: TObject);
+begin
+ColorLine:='cl'+ ColorCombo.Text;
+end;
+
+procedure TForm1.Init;
+begin
+  x:=StrToInt(EditX.Text);
+  y:=StrToInt(EditY.Text);
+  r:=StrToInt(EditR.Text);
+end;
+
+procedure TForm1.md;
+begin
+  Inc(xi);
+  Dec(yi);
+  di:=di+2*xi-2*yi+2;
+end;
+
+procedure TForm1.mh;
+begin
+  Inc(xi);
+  di:=di+2*xi+1;
+end;
+
+procedure TForm1.mv;
+begin
+  Dec(yi);
+  di:=di-2*yi-1;
+end;
+
+procedure TForm1.RecurseFilling(x,y,BorderColor: Integer);
+var c: Integer;
+begin
+  c:=Image1.Canvas.Pixels[x,y];
+  if(c=BorderColor)then
+    begin
+      Image1.Canvas.Pixels[x,y]:=StringToColor('cl'+ColorCombo.Text);
+      RecurseFilling(x-1,y,BorderColor);
+      RecurseFilling(x+1,y,BorderColor);
+      RecurseFilling(x,y-1,BorderColor);
+      RecurseFilling(x,y+1,BorderColor);
+    end;
+  //Sleep(1);
+  Application.ProcessMessages;
+end;
+
+procedure TForm1.MyAlhorithm;
+var sqr_r: Integer;
+begin
+  xi:=0;
+  sqr_r:=r*r;
+  while(xi<=yi) do
+    begin
+      yi:=Round(Sqrt(sqr_r-xi*xi));
+      with Image1.Canvas do
+        begin
+          Pixels[xi+x,yi+y]:=stringtocolor('cl'+ColorCombo.Text);
+          Pixels[yi+x,xi+y]:=stringtocolor('cl'+ColorCombo.Text);
+
+          Pixels[xi*-1+x,yi+y]:=stringtocolor('cl'+ColorCombo.Text);
+          Pixels[yi*-1+x,xi+y]:=stringtocolor('cl'+ColorCombo.Text);
+
+          Pixels[xi+x,yi*-1+y]:=stringtocolor('cl'+ColorCombo.Text);
+          Pixels[yi+x,xi*-1+y]:=stringtocolor('cl'+ColorCombo.Text);
+
+          Pixels[xi*-1+x,yi*-1+y]:=stringtocolor('cl'+ColorCombo.Text);
+          Pixels[yi*-1+x,xi*-1+y]:=stringtocolor('cl'+ColorCombo.Text);
+          Sleep(5);
+          Application.ProcessMessages;
+        end;
+      Inc(xi);
+    end;
+end;
+
+procedure TForm1.Image1MouseDown(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer);
+begin
+  RecurseFilling(x,y,Image1.Canvas.Pixels[x,y]);
+end;
+
+procedure TForm1.Button3Click(Sender: TObject);
+begin
+  Net;
+  Init;
+  Time:=Now;
+  MyAlhorithmInt;
+  Label1.Caption:=FloatToStr(MilliSecondSpan(Now,Time));
+end;
+
+procedure TForm1.MyAlhorithmInt;
+var error: Integer;
+begin
+  xi:=r;
+  yi:=0;
+  error:=1-xi;
+
+  while(xi>=yi) do
+    begin
+      with Image1.Canvas do
+        begin
+          Pixels[xi+x,yi+y]:=stringtocolor('cl'+ColorCombo.Text);
+          Pixels[yi+x,xi+y]:=stringtocolor('cl'+ColorCombo.Text);
+
+          Pixels[xi*-1+x,yi+y]:=stringtocolor('cl'+ColorCombo.Text);
+          Pixels[yi*-1+x,xi+y]:=stringtocolor('cl'+ColorCombo.Text);
+
+          Pixels[xi+x,yi*-1+y]:=stringtocolor('cl'+ColorCombo.Text);
+          Pixels[yi+x,xi*-1+y]:=stringtocolor('cl'+ColorCombo.Text);
+
+          Pixels[xi*-1+x,yi*-1+y]:=stringtocolor('cl'+ColorCombo.Text);
+          Pixels[yi*-1+x,xi*-1+y]:=stringtocolor('cl'+ColorCombo.Text);
+          Sleep(5);
+          Application.ProcessMessages;
+        end;
+      Inc(yi);
+      if(error<0)then Inc(error,2*yi+1)
+      else
+        begin
+          Dec(xi);
+          Inc(error,2*(yi-xi+1));
+        end;
+    end;
+end;
+
+
+end.

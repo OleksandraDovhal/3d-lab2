@@ -1,0 +1,107 @@
+object Form1: TForm1
+  Left = 285
+  Top = 552
+  Width = 496
+  Height = 358
+  Caption = 'Form1'
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'MS Sans Serif'
+  Font.Style = []
+  OldCreateOrder = False
+  PixelsPerInch = 96
+  TextHeight = 13
+  object Image1: TImage
+    Left = 0
+    Top = 0
+    Width = 320
+    Height = 320
+    OnMouseDown = Image1MouseDown
+  end
+  object Label1: TLabel
+    Left = 328
+    Top = 240
+    Width = 32
+    Height = 13
+    Caption = 'Label1'
+  end
+  object EditX: TEdit
+    Left = 336
+    Top = 16
+    Width = 57
+    Height = 21
+    TabOrder = 0
+    Text = '100'
+  end
+  object EditY: TEdit
+    Left = 408
+    Top = 16
+    Width = 57
+    Height = 21
+    TabOrder = 1
+    Text = '100'
+  end
+  object EditR: TEdit
+    Left = 336
+    Top = 48
+    Width = 129
+    Height = 21
+    TabOrder = 2
+    Text = '200'
+  end
+  object Button1: TButton
+    Left = 336
+    Top = 80
+    Width = 129
+    Height = 25
+    Caption = 'Brezenhem'
+    TabOrder = 3
+    OnClick = Button1Click
+  end
+  object Button2: TButton
+    Left = 336
+    Top = 120
+    Width = 129
+    Height = 25
+    Caption = 'MyAlhorithm'
+    TabOrder = 4
+    OnClick = Button2Click
+  end
+  object ColorCombo: TComboBox
+    Left = 326
+    Top = 208
+    Width = 145
+    Height = 21
+    ItemHeight = 13
+    TabOrder = 5
+    Text = 'Red'
+    OnChange = ColorComboChange
+    Items.Strings = (
+      'Black'
+      'Maroon'
+      'Green'
+      'Olive'
+      'Navy'
+      'Purple'
+      'Teal'
+      'Gray'
+      'Silver'
+      'Red'
+      'Lime'
+      'Yellow'
+      'Blue'
+      'Fuchsia'
+      'Aqua')
+  end
+  object Button3: TButton
+    Left = 336
+    Top = 152
+    Width = 129
+    Height = 25
+    Caption = 'MyAlhorithmInt'
+    TabOrder = 6
+    OnClick = Button3Click
+  end
+end
